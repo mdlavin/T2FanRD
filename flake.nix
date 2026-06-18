@@ -14,6 +14,16 @@
         pname = "t2fanrd";
         version = "0.1.0";
         src = ./.;
+
+        # crates.io began rejecting requests with no/generic User-Agent
+        # in late May 2026 (HTTP 403). nixpkgs has two crate-fetching
+        # paths; only `fetchCargoVendor` was patched upstream to send
+        # an identifying UA and use static.crates.io
+        # (NixOS/nixpkgs#512735). `cargoLock.lockFile` routes through
+        # the older `importCargoLock` inline `fetchCrate` which is
+        # still broken at HEAD. Use `cargoHash` + `useFetchCargoVendor`
+        # to take the fixed path.
+        useFetchCargoVendor = true;
         cargoHash = "sha256-FKQYiaOTZxD95AWD2zbVjENzMAPrFl/rzhwbkAgGbx0=";
       };
       nixosModules.t2fanrd = { config, lib, ... }:
